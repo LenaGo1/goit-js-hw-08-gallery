@@ -1,13 +1,27 @@
 
 import images from './gallery-items.js';
 
+const galleryContainer = document.querySelector('.js-gallery');
+const imagesMarkup = createGalleryMarkup(images);
+const lightboxRef = document.querySelector('.js-lightbox');
+const imageLightbox = document.querySelector('.lightbox__image');
+const closeLightboxBtn = document.querySelector('button[data-action="close-lightbox"]');
+const lightboxOverlayRef = document.querySelector('.lightbox__overlay')
+
+galleryContainer.insertAdjacentHTML('beforeend', imagesMarkup);
+
+galleryContainer.addEventListener('click', onContainerClick);
+closeLightboxBtn.addEventListener('click', onCloseLightbox);
+lightboxOverlayRef.addEventListener('click', onCloseLightbox);
+window.addEventListener('keydown', onPressEscape);  
+
 function createGalleryMarkup(images) {
     return images.map(({preview, original, description}) => {
         return `
         <li class="gallery__item">
             <a
                 class="gallery__link"
-            href="${original}"
+            href="#"
             >
                 <img
                     class="gallery__image"
@@ -22,30 +36,26 @@ function createGalleryMarkup(images) {
         .join('');
     
 }
-const galleryContainer = document.querySelector('.js-gallery');
-const imagesMarkup = createGalleryMarkup(images);
+function onContainerClick(evt) {
+    const isGalleryImage = evt.target.classList.contains('gallery__image');
+    if (!isGalleryImage) {
+    return;
+    }
 
-galleryContainer.insertAdjacentHTML('beforeend', imagesMarkup);
-// let selectedImage = null;
+    imageLightbox.setAttribute('src', evt.target.dataset.source);
+    imageLightbox.setAttribute('alt', evt.target.alt);
 
-// galleryContainer.addEventListener('click', onImageContainerClick);
+    lightboxRef.classList.add('is-open');
+}
 
-// function onImageContainerClick(evt) {
-//     if (evt.target.nodeName !== 'IMG') {
-//         return
-//     }
+function onCloseLightbox() {
+    lightboxRef.classList.remove('is-open');
+    imageLightbox.setAttribute('src', '#');
+    imageLightbox.setAttribute('alt', '');
+}
 
-//     const currentActiveIMG = document.querySelector('.tags__img--active');
-
-//     if (currentActiveIMG) {
-//         currentActiveIMG.classList.remove('tags__img--active')
-//     }
-
-//     const nextActiveImg = evt.target;
-//     nextActiveImg.classList.add('tags__img--active');
-//     selectedImage = nextActiveImg.dataset.value;
-
-//     console.log(evt.target);
-//     console.log(evt.target.nodeName);
-//     console.log(selectedImage);
-// }
+function onPressEscape(evt) {
+    if (evt.key == ("Escape" || "Esc")) {
+        onCloseLightbox();
+    }
+}
