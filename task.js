@@ -13,7 +13,6 @@ galleryContainer.insertAdjacentHTML('beforeend', imagesMarkup);
 galleryContainer.addEventListener('click', onContainerClick);
 closeLightboxBtn.addEventListener('click', onCloseLightbox);
 lightboxOverlayRef.addEventListener('click', onCloseLightbox);
-window.addEventListener('keydown', onPressEscape);  
 
 function createGalleryMarkup(images) {
     return images.map(({preview, original, description}) => {
@@ -34,7 +33,6 @@ function createGalleryMarkup(images) {
             `;
     })
         .join('');
-    
 }
 function onContainerClick(evt) {
     const isGalleryImage = evt.target.classList.contains('gallery__image');
@@ -46,16 +44,20 @@ function onContainerClick(evt) {
     imageLightbox.setAttribute('alt', evt.target.alt);
 
     lightboxRef.classList.add('is-open');
+
+    window.addEventListener('keydown', onPressEscape);
 }
 
 function onCloseLightbox() {
     lightboxRef.classList.remove('is-open');
     imageLightbox.setAttribute('src', '#');
     imageLightbox.setAttribute('alt', '');
+    
+    window.removeEventListener('keydown', onPressEscape);
 }
 
 function onPressEscape(evt) {
-    if (evt.key == ("Escape" || "Esc")) {
+    if (evt.key === "Escape" || evt.key === "Esc") {
         onCloseLightbox();
     }
 }
